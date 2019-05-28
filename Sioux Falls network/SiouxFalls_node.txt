@@ -1,0 +1,2 @@
+the coordinate of the node was not edited.
+just the ; at the end of each row is deleted.
