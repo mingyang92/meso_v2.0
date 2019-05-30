@@ -72,7 +72,7 @@ def serializeNetwork(network):
 calculationStart = time.clock()
 
 startTs = datetime.datetime(2019, 1, 1, 7, 0, 0)
-totalSteps = 10000 #2500
+totalSteps = 15000 #2500
 timeStep = 1
 
 jamDensity = 124
@@ -82,17 +82,19 @@ random.seed(10)
 #writer_log.writerow('This simulation is for:', 'delay type:', delayingType, 'vehicle generation:', genVehicle)
 
 vehicleId = 0
-GEN_VEH_DIST = 'random' # ["uniform", "random", "random_whole", "normal_whole"]
+GEN_VEH_DIST = 'normal_whole' # ["uniform", "random", "random_whole", "normal_whole"]
 STRATEGY = 'fix' # ['vol_sim', 'vol_dist', 'random', 'fix']
 MULTIVEH = 3 #[default=1, 2, 3,...]
 
 network = Network(startTs)
 
-fNode = open("C:/Users/lyy90/OneDrive/Documents/GitHub/twinwell/twinwell/Sioux Falls network/nodes-SiouxFalls_gong.csv")
+#fNode = open("C:/Users/lyy90/OneDrive/Documents/GitHub/twinwell/twinwell/Sioux Falls network/nodes-SiouxFalls_gong.csv")
+fNode = open("F:/meso_v2.0/Sioux Falls network/nodes-SiouxFalls_gong.csv")
 fNode.readline()
-fLane = open("C:/Users/lyy90/OneDrive/Documents/GitHub/twinwell/twinwell/Sioux Falls network/lanes-SiouxFalls_gong.csv")
+#fLane = open("C:/Users/lyy90/OneDrive/Documents/GitHub/twinwell/twinwell/Sioux Falls network/lanes-SiouxFalls_gong.csv")
+fLane = open("F:/meso_v2.0/Sioux Falls network/lanes-SiouxFalls_gong.csv")
 fLane.readline()
-pOd = "C:/Users/lyy90/OneDrive/Documents/GitHub/twinwell/twinwell/OD_data"
+pOd = "F:/meso_v2.0/OD_data"
 
 readNodes(fNode, network)
 readLanes(fLane, network)
@@ -156,7 +158,7 @@ for i in range(totalSteps):
 
     if (i > 10 and i % 1000 == 0) or (network.runningVehicleCount() == 0 and network.finishVehicleCount()>1000):
         # this part for output JSON file
-
+        print("writing json file....")
         output = {}
         output["nodes"] = {n.id: serializeNode(n) for n in network.idNodeMap.values()}
         output["links"] = {l.id: serializeLink(l) for l in network.idLinkMap.values()}
@@ -164,8 +166,11 @@ for i in range(totalSteps):
         for network in networks:
             output["networks"].append(serializeNetwork(network))
 
-        f_path = 'visualization/' + GEN_VEH_DIST + '_' + STRATEGY \
+        #f_path = 'visualization/' + GEN_VEH_DIST + '_' + STRATEGY \
+        #        + str(MULTIVEH) + '_' + str(FILE_NUMBER) + '_output.json'
+        f_path = 'F:/meso_v2.0/visualization/' + GEN_VEH_DIST + '_' + STRATEGY \
                  + str(MULTIVEH) + '_' + str(FILE_NUMBER) + '_output.json'
+
         f = open(f_path, "w")
         # f.write("networkData = ")
         f.write(json.dumps(output))
@@ -204,7 +209,7 @@ for i in range(totalSteps):
 
 
 
-elapsed = (time.clock() - calculationStart)
+elapsed = (time.process_time() - calculationStart)
 print('The total calculation time is:', elapsed, 'seconds')
 
 '''
