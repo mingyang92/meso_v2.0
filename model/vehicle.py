@@ -192,7 +192,7 @@ class Vehicle(object):
 
 
 
-    def changeLane(self, originTimeCost, timeInSecond, medianValueTime, countTime):
+    def changeLane(self, originTimeCost, timeInSecond, medianValueTime, countTime, NO_CHARGE=False):
         # this function returns a result of whether to change to a faster and more expensive lane-network at
         # a current time stamp after obtaining its current location.
         # this function is only used when the vehicle is not in the last section to its destination; this is
@@ -215,6 +215,17 @@ class Vehicle(object):
         # if the speed of current lane < 1 and the speed of neighbor lane > 1, the change.
         timeUseToFinishLane = 3600.0 * (
                             1.0 - self.currentLaneProgress) * self.currentLane.link.lengthInKm / self.currentLane.speed
+
+        if NO_CHARGE==True:
+            neighborLaneSpeed = self.network.typeGraphMap[str(1 - int(self.laneType))][
+                self.currentLane.link.node1.id][self.currentLane.link.node2.id].speed
+            timeUseToFinishLane_neighbor = 3600.0 * (
+                    1.0 - self.currentLaneProgress) * self.currentLane.link.lengthInKm / neighborLaneSpeed
+            if timeUseToFinishLane_neighbor < timeUseToFinishLane:
+                print('change to neighbor lane!')
+                self.change_lane = 1
+                self.laneType = str(1 - int(self.laneType))
+            return
 
         if self.currentLane.speed < 1:
             neighborLaneSpeed = self.network.typeGraphMap[str(1-int(self.laneType))][
