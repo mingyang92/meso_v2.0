@@ -84,19 +84,19 @@ random.seed(10)
 vehicleId = 0
 GEN_VEH_DIST = 'uniform' # ["uniform", "random", "random_whole", "normal_whole"]
 STRATEGY = 'fix' # ['vol_sim', 'vol_dist', 'random', 'fix']
-MULTIVEH = 1 #[default=1, 2, 3,...]
+MULTIVEH = 3 #[default=1, 2, 3,...]
 NO_CHARGE = True
 
 network = Network(startTs)
 
-fNode = open("C:/Users/lyy90/OneDrive/Documents/GitHub/meso_v2.0/Sioux Falls network/nodes-SiouxFalls_gong.csv")
-#fNode = open("F:/meso_v2.0/Sioux Falls network/nodes-SiouxFalls_gong.csv")
+#fNode = open("C:/Users/lyy90/OneDrive/Documents/GitHub/meso_v2.0/Sioux Falls network/nodes-SiouxFalls_gong.csv")
+fNode = open("F:/meso_v2.0/Sioux Falls network/nodes-SiouxFalls_gong.csv")
 fNode.readline()
-fLane = open("C:/Users/lyy90/OneDrive/Documents/GitHub/meso_v2.0/Sioux Falls network/lanes-SiouxFalls_gong.csv")
-#fLane = open("F:/meso_v2.0/Sioux Falls network/lanes-SiouxFalls_gong.csv")
+#fLane = open("C:/Users/lyy90/OneDrive/Documents/GitHub/meso_v2.0/Sioux Falls network/lanes-SiouxFalls_gong.csv")
+fLane = open("F:/meso_v2.0/Sioux Falls network/lanes-SiouxFalls_gong.csv")
 fLane.readline()
-#pOd = "F:/meso_v2.0/OD_data"
-pOd = 'C:/Users/lyy90/OneDrive/Documents/GitHub/meso_v2.0/OD_data'
+pOd = "F:/meso_v2.0/OD_data"
+#pOd = 'C:/Users/lyy90/OneDrive/Documents/GitHub/meso_v2.0/OD_data'
 
 readNodes(fNode, network)
 readLanes(fLane, network)
@@ -168,10 +168,10 @@ for i in range(totalSteps):
         for network in networks:
             output["networks"].append(serializeNetwork(network))
 
-        f_path = 'visualization/' + GEN_VEH_DIST + '_' + STRATEGY \
-                + str(MULTIVEH) + '_' + str(NO_CHARGE) + '_' + str(FILE_NUMBER) + '_output.json'
-        #f_path = 'F:/meso_v2.0/visualization/' + GEN_VEH_DIST + '_' + STRATEGY \
-        #         + str(MULTIVEH) + '_' + NO_CHARGE + '_' + str(FILE_NUMBER) + '_output.json'
+        #f_path = 'visualization/' + GEN_VEH_DIST + '_' + STRATEGY \
+        #        + str(MULTIVEH) + '_' + str(NO_CHARGE) + '_' + str(FILE_NUMBER) + '_output.json'
+        f_path = 'F:/meso_v2.0/visualization/' + GEN_VEH_DIST + '_' + STRATEGY \
+                 + str(MULTIVEH) + '_' + str(NO_CHARGE) + '_' + str(FILE_NUMBER) + '_output.json'
 
         f = open(f_path, "w")
         # f.write("networkData = ")
