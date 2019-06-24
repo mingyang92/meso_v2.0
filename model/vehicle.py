@@ -222,15 +222,21 @@ class Vehicle(object):
             timeUseToFinishLane_neighbor = 3600.0 * (
                     1.0 - self.currentLaneProgress) * self.currentLane.link.lengthInKm / neighborLaneSpeed
             if timeUseToFinishLane_neighbor < timeUseToFinishLane:
-                print('change to neighbor lane!')
-                self.change_lane = 1
-                self.laneType = str(1 - int(self.laneType))
+                #print('change to neighbor lane!')
+                if self.type == 'bus':
+                    print("bus change lane!")
+                    self.change_lane = 1
+                    self.laneType = str(1 - int(self.laneType))
+                elif self.type == 'car' and self.valueTime > medianValueTime:
+                    print("car change lane!")
+                    self.change_lane = 1
+                    self.laneType = str(1 - int(self.laneType))
             return
 
         if self.currentLane.speed < 1:
             neighborLaneSpeed = self.network.typeGraphMap[str(1-int(self.laneType))][
                 self.currentLane.link.node1.id][self.currentLane.link.node2.id].speed
-            #print('vehicle', self.id, self.currentLane, 'before')
+            print('vehicle', self.id, self.currentLane, 'before')
             if neighborLaneSpeed < 1:
                 #print('neigborLane', neighborLaneSpeed)
                 print('Neighbor lane is jam!!! Stay in the current lane!!!')
