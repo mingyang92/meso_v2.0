@@ -82,21 +82,21 @@ random.seed(10)
 #writer_log.writerow('This simulation is for:', 'delay type:', delayingType, 'vehicle generation:', genVehicle)
 
 vehicleId = 0
-GEN_VEH_DIST = 'normal_whole' # ["uniform", "random", "random_whole", "normal_whole"]
+GEN_VEH_DIST = 'uniform' # ["uniform", "random", "random_whole", "normal_whole"]
 STRATEGY = 'vol_sim' # ['vol_sim', 'vol_dist', 'random', 'fix']
 MULTIVEH = 1 #[default=1, 2, 3,...]
 NO_CHARGE = True
 
 network = Network(startTs)
 
-#fNode = open("C:/Users/lyy90/OneDrive/Documents/GitHub/meso_v2.0/Sioux Falls network/nodes-SiouxFalls_gong.csv")
-fNode = open("F:/meso_v2.0/Sioux Falls network/nodes-SiouxFalls_gong.csv")
+fNode = open("C:/Users/lyy90/OneDrive/Documents/GitHub/meso_v2.0/Sioux Falls network/nodes-SiouxFalls_gong.csv")
+#fNode = open("F:/meso_v2.0/Sioux Falls network/nodes-SiouxFalls_gong.csv")
 fNode.readline()
-#fLane = open("C:/Users/lyy90/OneDrive/Documents/GitHub/meso_v2.0/Sioux Falls network/lanes-SiouxFalls_gong.csv")
-fLane = open("F:/meso_v2.0/Sioux Falls network/lanes-SiouxFalls_gong.csv")
+fLane = open("C:/Users/lyy90/OneDrive/Documents/GitHub/meso_v2.0/Sioux Falls network/lanes-SiouxFalls_gong.csv")
+#fLane = open("F:/meso_v2.0/Sioux Falls network/lanes-SiouxFalls_gong.csv")
 fLane.readline()
-pOd = "F:/meso_v2.0/OD_data"
-#pOd = 'C:/Users/lyy90/OneDrive/Documents/GitHub/meso_v2.0/OD_data'
+#pOd = "F:/meso_v2.0/OD_data"
+pOd = 'C:/Users/lyy90/OneDrive/Documents/GitHub/meso_v2.0/OD_data'
 
 readNodes(fNode, network)
 readLanes(fLane, network)
@@ -129,7 +129,8 @@ for i in range(totalSteps):
         vehicle = network.idVehicleMap[vid]
         #print('vehicle.isRunning(network.ts):',vehicle.isRunning(network.ts))
         if not vehicle.isRunning(network.ts): continue
-
+        if (network.ts-vehicle.startTs).seconds % countTime != 0:
+            continue
         vehicle.updateShortestPath() #TODO: add vid as an parameter in the updating process
         #print('This current lane is:', vehicle.currentLane)
     # update lane features
