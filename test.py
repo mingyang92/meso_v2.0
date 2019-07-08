@@ -72,7 +72,7 @@ def serializeNetwork(network):
 calculationStart = time.clock()
 
 startTs = datetime.datetime(2019, 1, 1, 7, 0, 0)
-totalSteps = 20000 #2500
+totalSteps = 15000 #2500
 timeStep = 1
 
 jamDensity = 124
@@ -84,7 +84,7 @@ random.seed(10)
 vehicleId = 0
 GEN_VEH_DIST = 'normal_whole' # ["uniform", "random", "random_whole", "normal_whole"]
 STRATEGY = 'vol_sim' # ['vol_sim', 'vol_dist', 'random', 'fix']
-MULTIVEH = 3 #[default=1, 2, 3,...]
+MULTIVEH = 1 #[default=1, 2, 3,...]
 NO_CHARGE = True
 
 network = Network(startTs)
@@ -117,7 +117,7 @@ y_stopping = []
 x_time = list(range(totalSteps))
 
 dictTimeCost = {}
-countTime = 0
+countTime = 5
 FILE_NUMBER = 0
 
 for i in range(totalSteps):
@@ -147,7 +147,7 @@ for i in range(totalSteps):
         if not vehicle.isRunning(network.ts): continue
         # todo: check this function
         vehicle.updateLocation(1, delayType=STRATEGY) #update for 1 SECOND!
-        vehicle.changeLane(dictTimeCost[vehicle.id], 5, medianValueTime, countTime, NO_CHARGE)
+        vehicle.changeLane(dictTimeCost[vehicle.id], 10, medianValueTime, countTime, NO_CHARGE)
         #print(vehicle.id, 'The current lane is:',vehicle.laneType)
 
     # decision
