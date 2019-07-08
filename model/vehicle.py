@@ -34,8 +34,6 @@ class Vehicle(object):
         #self.tsLocationMap = tsLocationMap
         #self.tsRouteMap = tsRouteMap
 
-        self.current_time_sec = 0
-
     def isBegin(self, ts):
         """
         This function judge whether the simulation starts
@@ -143,22 +141,15 @@ class Vehicle(object):
         # TODO: TO RECORD THE CHANGE BEHAVIOUR
         self.change_lane = 0
 
-        if self.current_time_sec != countTime:
-            self.current_time_sec += 1
-            print("count time ++ 1")
-            return
-
         if self.currentLane.link.node2 == self.nodeDest:
             # finish
             self.finishTs = self.network.ts
             self.currentLane = None
             self.currentLaneProgress = None
             print(self, "finished at", self.finishTs)
-            self.current_time_sec = 0
             return
 
         if not self.bestLaneRoute:
-            self.current_time_sec = 0
             return
         # 至今为止还剩余的时间
         leftTimeToEnd = originTimeCost - countTime * timeInSecond
@@ -174,7 +165,6 @@ class Vehicle(object):
                 self.change_lane = 1
             else:
                 # 如果在低速道上则保持在低速道
-                self.current_time_sec = 0
                 return
         elif leftTimeToEnd < expectTimeCostLow and leftTimeToEnd > expectTimeCostHigh:
             # 剩下的时间走高速道可以到达
