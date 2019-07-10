@@ -117,8 +117,9 @@ y_stopping = []
 x_time = list(range(totalSteps))
 
 dictTimeCost = {}
-countTime = 5
+countTime = 5 # 到路口前提前多少秒做判断
 FILE_NUMBER = 0
+GAP_TS = 5
 
 for i in range(totalSteps):
     network = networks[-1] # current network
@@ -129,7 +130,7 @@ for i in range(totalSteps):
         vehicle = network.idVehicleMap[vid]
         #print('vehicle id:', vid)
         if not vehicle.isRunning(network.ts): continue
-        if (network.ts-vehicle.startTs).seconds % countTime != 0:
+        if (network.ts-vehicle.startTs).seconds % GAP_TS != 0:
             continue
         vehicle.updateShortestPath() #TODO: add vid as an parameter in the updating process
         #print('This current lane is:', vehicle.currentLane)
@@ -149,10 +150,11 @@ for i in range(totalSteps):
         # todo: check this function
         vehicle.updateLocation(1, delayType=STRATEGY) #update for 1 SECOND!
         vehicle.changeLane(dictTimeCost[vehicle.id], 10, medianValueTime, countTime, NO_CHARGE)
+
+        # print the vehicle information when it takes too long to finish its trip
         if (network.ts - vehicle.startTs).seconds > 1000:
             print("ts:",(network.ts - vehicle.startTs).seconds)
-            print("vid", vehicle.id, 'start:', vehicle.nodeOrigin.id, "end", vehicle.nodeDest.id, "current LANE",
-                  vehicle.currentLane)
+            print("vehicle:", vehicle)
             print("route:", vehicle.bestLaneRoute)
 
     # decision
@@ -193,7 +195,7 @@ for i in range(totalSteps):
     if network.runningVehicleCount() == 0 and network.finishVehicleCount()>1000:
         break
 
-    countTime += 1
+    #countTime += 1
 
     # output features of lanes along the time stamps
     '''
