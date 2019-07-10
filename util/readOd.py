@@ -274,7 +274,7 @@ def genVehicle(tsPairNodePairTypeMap, distribution, vehicleId, medianValueTime, 
         endTs = listTsPair[-1]
         duration = endTs - startTs
         mu = 900 ## need to be set
-        sigma = 1000 ## need to be set
+        sigma = 500 ## need to be set
 
         def normalTs(mu, sigma, size):
             """
