@@ -59,10 +59,12 @@ class Vehicle(object):
         return self.isBegin(ts) and not self.isFinish(ts)
 
     def __repr__(self):
-        return "<" + " ".join([str(self.id), self.type, str(self.driverType), str(self.maxSpeed),
-                         str(self.valueTime), str(self.probLaneChange),
-                         str(self.startTs), str(self.nodeOrigin), str(self.nodeDest), str(self.change_lane),
-                         str(self.currentLane)]) + ">"
+        return "<" + " ".join(["vehicle" + str(self.id), "type: " + self.type, "driver type: " + str(self.driverType),
+                         "maxSpeed: " + str(self.maxSpeed), "valueTime: " + str(self.valueTime),
+                         "prob of change: " + str(self.probLaneChange),
+                         "startTs: " + str(self.startTs), "nodeOrigin: " + str(self.nodeOrigin),
+                         "nodeDest: " + str(self.nodeDest), "change lane: " + str(self.change_lane),
+                         "current lane: " + str(self.currentLane)]) + ">"
 
     def updateShortestPath(self):
         """
@@ -142,13 +144,13 @@ class Vehicle(object):
         # TODO: TO RECORD THE CHANGE BEHAVIOUR
         self.change_lane = 0
 
-        if self.currentLane.link.node2 == self.nodeDest:
+        #if self.currentLane.link.node2 == self.nodeDest:
             # finish
-            self.finishTs = self.network.ts
-            self.currentLane = None
-            self.currentLaneProgress = None
-            print(self, "finished at", self.finishTs)
-            return
+        #    self.finishTs = self.network.ts
+        #    self.currentLane = None
+        #    self.currentLaneProgress = None
+        #    print(self, "finished at", self.finishTs)
+        #    return
 
         if not self.bestLaneRoute:
             return
@@ -236,10 +238,11 @@ class Vehicle(object):
                     self.laneType = str(1 - int(self.laneType))
             return
         #print("error in vehicle!")
+
         if self.currentLane.speed < 1:
             neighborLaneSpeed = self.network.typeGraphMap[str(1-int(self.laneType))][
                 self.currentLane.link.node1.id][self.currentLane.link.node2.id].speed
-            print('vehicle', self.id, self.currentLane, 'before')
+            #print('vehicle', self.id, self.currentLane, 'before')
             if neighborLaneSpeed < 1:
                 #print('neigborLane', neighborLaneSpeed)
                 print('Neighbor lane is jam!!! Stay in the current lane!!!')
@@ -275,7 +278,7 @@ class Vehicle(object):
         '''
         This function calculate the expecting time to destination from next lane in bestLaneRoute
         :param self:
-        :param laneType:
+        :param laneType: current lane type
         :return:
         '''
         # 计算现在条件下到达终点的预期时间
