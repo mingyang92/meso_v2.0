@@ -120,7 +120,8 @@ def astar(G, start, end, network):
             if G[P[child]][child].speed == None:
                 print('The speed is None!!')
                 G[P[child]][child].speed = G[P[child]][child].freeSpeed
-            heuristicCost = manhattanDist / G[P[child]][child].speed  # magic speed
+            #heuristicCost = manhattanDist / G[P[child]][child].speed  # magic speed
+            heuristicCost = manhattanDist / G[P[child]][child].freeSpeed
             #print('heuristic:', heuristicCost)
             aMap[child]['h_cost'] = heuristicCost
             aMap[child]['f_cost'] = aMap[child]['g_cost'] + aMap[child]['h_cost']
