@@ -72,7 +72,7 @@ def serializeNetwork(network):
 calculationStart = time.clock()
 
 startTs = datetime.datetime(2019, 1, 1, 7, 0, 0)
-totalSteps = 15000 #2500
+totalSteps = 20000 #2500
 timeStep = 1
 
 jamDensity = 124
@@ -82,21 +82,21 @@ random.seed(10)
 #writer_log.writerow('This simulation is for:', 'delay type:', delayingType, 'vehicle generation:', genVehicle)
 
 vehicleId = 0
-GEN_VEH_DIST = 'uniform' # ["uniform", "random", "random_whole", "normal_whole"]
+GEN_VEH_DIST = 'normal_whole' # ["uniform", "random", "random_whole", "normal_whole"]
 STRATEGY = 'vol_sim' # ['vol_sim', 'vol_dist', 'random', 'fix']
-MULTIVEH = 1 #[default=1, 2, 3,...]
+MULTIVEH = 2 #[default=1, 2, 3,...]
 NO_CHARGE = True
 
 network = Network(startTs)
 
-fNode = open("C:/Users/lyy90/OneDrive/Documents/GitHub/meso_v2.0/Sioux Falls network/nodes-SiouxFalls_gong.csv")
-#fNode = open("F:/meso_v2.0/Sioux Falls network/nodes-SiouxFalls_gong.csv")
+#fNode = open("C:/Users/lyy90/OneDrive/Documents/GitHub/meso_v2.0/Sioux Falls network/nodes-SiouxFalls_gong.csv")
+fNode = open("F:/meso_v2.0/Sioux Falls network/nodes-SiouxFalls_gong.csv")
 fNode.readline()
-fLane = open("C:/Users/lyy90/OneDrive/Documents/GitHub/meso_v2.0/Sioux Falls network/lanes-SiouxFalls_gong.csv")
-#fLane = open("F:/meso_v2.0/Sioux Falls network/lanes-SiouxFalls_gong.csv")
+#fLane = open("C:/Users/lyy90/OneDrive/Documents/GitHub/meso_v2.0/Sioux Falls network/lanes-SiouxFalls_gong.csv")
+fLane = open("F:/meso_v2.0/Sioux Falls network/lanes-SiouxFalls_gong.csv")
 fLane.readline()
-#pOd = "F:/meso_v2.0/OD_data"
-pOd = 'C:/Users/lyy90/OneDrive/Documents/GitHub/meso_v2.0/OD_data'
+pOd = "F:/meso_v2.0/OD_data"
+#pOd = 'C:/Users/lyy90/OneDrive/Documents/GitHub/meso_v2.0/OD_data'
 
 readNodes(fNode, network)
 readLanes(fLane, network)
@@ -127,7 +127,7 @@ for i in range(totalSteps):
     # update best route
     for vid in network.idVehicleMap:
         vehicle = network.idVehicleMap[vid]
-        #print('vehicle.isRunning(network.ts):',vehicle.isRunning(network.ts))
+        #print('vehicle id:', vid)
         if not vehicle.isRunning(network.ts): continue
         if (network.ts-vehicle.startTs).seconds % countTime != 0:
             continue
@@ -149,7 +149,11 @@ for i in range(totalSteps):
         # todo: check this function
         vehicle.updateLocation(1, delayType=STRATEGY) #update for 1 SECOND!
         vehicle.changeLane(dictTimeCost[vehicle.id], 10, medianValueTime, countTime, NO_CHARGE)
-        #print(vehicle.id, 'The current lane is:',vehicle.laneType)
+        if (network.ts - vehicle.startTs).seconds > 1000:
+            print("ts:",(network.ts - vehicle.startTs).seconds)
+            print("vid", vehicle.id, 'start:', vehicle.nodeOrigin.id, "end", vehicle.nodeDest.id, "current LANE",
+                  vehicle.currentLane)
+            print("route:", vehicle.bestLaneRoute)
 
     # decision
 
