@@ -84,7 +84,7 @@ random.seed(10)
 vehicleId = 0
 GEN_VEH_DIST = 'normal_whole' # ["uniform", "random", "random_whole", "normal_whole"]
 STRATEGY = 'vol_sim' # ['vol_sim', 'vol_dist', 'random', 'fix']
-MULTIVEH = 2 #[default=1, 2, 3,...]
+MULTIVEH = 3 #[default=1, 2, 3,...]
 NO_CHARGE = True
 
 network = Network(startTs)
