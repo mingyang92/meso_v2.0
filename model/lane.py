@@ -71,7 +71,9 @@ class Lane(object):
                 #speed = 0.001  # km/h
                 speed = 0.99
             else:
+                # 这里有可能current speed小于0.99, 因此加了限制条件使得最低速度为0.99
                 speed = freespeed * (1.0 - 1.0 * density / JAMDENSITY)
+                if speed < 1: speed = 0.99
             return speed
         #print('countPcu', self.countPcu, 'length in km:', self.link.lengthInKm)
         self.density = self.countPcu / self.link.lengthInKm
