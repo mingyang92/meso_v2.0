@@ -57,7 +57,8 @@ def genDriverValueTimeGen(medianValueTime):
     :param medianValueTime:
     :return:
     """
-    sigma = medianValueTime / 5.0
+    #sigma = medianValueTime / 5.0
+    sigma = medianValueTime * 5.0
     return np.random.normal(medianValueTime, sigma, 1)[0]
 
 def genProbLaneChange(type):
