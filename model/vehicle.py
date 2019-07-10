@@ -61,7 +61,8 @@ class Vehicle(object):
     def __repr__(self):
         return "<" + " ".join([str(self.id), self.type, str(self.driverType), str(self.maxSpeed),
                          str(self.valueTime), str(self.probLaneChange),
-                         str(self.startTs), str(self.nodeOrigin), str(self.nodeDest), str(self.change_lane)]) + ">"
+                         str(self.startTs), str(self.nodeOrigin), str(self.nodeDest), str(self.change_lane),
+                         str(self.currentLane)]) + ">"
 
     def updateShortestPath(self):
         """
@@ -234,7 +235,7 @@ class Vehicle(object):
                     self.change_lane = 1
                     self.laneType = str(1 - int(self.laneType))
             return
-        print("error in vehicle!")
+        #print("error in vehicle!")
         if self.currentLane.speed < 1:
             neighborLaneSpeed = self.network.typeGraphMap[str(1-int(self.laneType))][
                 self.currentLane.link.node1.id][self.currentLane.link.node2.id].speed
