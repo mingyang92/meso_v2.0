@@ -229,7 +229,7 @@ class Vehicle(object):
                     print("bus change lane!")
                     self.change_lane = 1
                     self.laneType = str(1 - int(self.laneType))
-                elif self.type == 'car' and self.valueTime > medianValueTime:
+                elif self.type == 'car': #and self.valueTime > medianValueTime:
                     print("car change lane!")
                     self.change_lane = 1
                     self.laneType = str(1 - int(self.laneType))
@@ -279,6 +279,7 @@ class Vehicle(object):
         '''
         # 计算现在条件下到达终点的预期时间
         # 计算是从下一条道开始
+        # TODO: SHOULD ADD DELAYING TIME
         expTime = 0
         for laneid in self.bestLaneRoute.keys():
             #print('lane id is:', laneid)
