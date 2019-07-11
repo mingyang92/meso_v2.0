@@ -47,10 +47,10 @@ medianValueTime = 50
 random.seed(10)
 
 vehicleId = 0
-GEN_VEH_DIST = 'normal_whole' # ["uniform", "random", "random_whole", "normal_whole"]
+GEN_VEH_DIST = 'uniform' # ["uniform", "random", "random_whole", "normal_whole"]
 STRATEGY = 'vol_sim' # ['vol_sim', 'vol_dist', 'random', 'fix']
-MULTIVEH = 2 #[default=1, 2, 3,...]
-NO_CHARGE = True
+MULTIVEH = 3 #[default=1, 2, 3,...]
+NO_CHARGE = False
 
 network = Network(startTs)
 
@@ -111,7 +111,8 @@ for i in range(totalSteps):
 
         if not vehicle.isRunning(network.ts): continue
         vehicle.updateLocation(1, delayType=STRATEGY) #update location in the lane for 1 SECOND!
-        vehicle.changeLane(dictTimeCost[vehicle.id], 10, medianValueTime, countTime, NO_CHARGE)
+        if (network.ts-vehicle.startTs).seconds % GAP_TS == 0:
+            vehicle.changeLane(dictTimeCost[vehicle.id], 10, medianValueTime, countTime, NO_CHARGE)
 
         # print the vehicle information when it takes too long to finish its trip
         if (network.ts - vehicle.startTs).seconds > 1000:
