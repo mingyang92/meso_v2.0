@@ -200,7 +200,7 @@ class Vehicle(object):
         if self.currentLane.speed < 1:
             if neighborLaneSpeed < 1:
                 #print('neigborLane', neighborLaneSpeed)
-                print('Neighbor lane is congest，stay in the current lane!')
+                #print('Neighbor lane is congest，stay in the current lane!')
                 self.currentLane = self.network.typeGraphMap[self.laneType][
                     self.currentLane.link.node1.id][self.currentLane.link.node2.id]
                 return
@@ -216,18 +216,19 @@ class Vehicle(object):
 
             if timeUseToFinishLane_neighbor < timeUseToFinishLane:
                 if self.type == 'bus':
-                    print("NO CHARGE LANE: bus change lane!")
+                    #print("NO CHARGE LANE: bus change lane!")
                     self.change_lane = 1
                     self.laneType = str(1 - int(self.laneType))
                 elif self.type == 'car' and self.valueTime > medianValueTime:
-                    print("NO CHARGE LANE: car change lane!")
+                    #print("NO CHARGE LANE: car change lane!")
                     self.change_lane = 1
                     self.laneType = str(1 - int(self.laneType))
-            else:
-                print('NO CHARGE LANE: stay at current lane!')
+            #else:
+                #print('NO CHARGE LANE: stay at current lane!')
+
             self.currentLane = self.network.typeGraphMap[self.laneType][
                 self.currentLane.link.node1.id][self.currentLane.link.node2.id]
-            return print('end no charge loop!')
+            return
 
         # In the case of charge lane
         if leftTimeToEnd > expectTimeCostLow:
@@ -235,7 +236,7 @@ class Vehicle(object):
             if self.laneType == '1':
                 # 如果已经在高速道上，则换回道低速道
                 self.laneType = '0'
-                print('CHARGE LANE: change to low speed lane.')
+                #print('CHARGE LANE: change to low speed lane.')
                 self.change_lane = 1
             else:
                 # 如果在低速道上则保持在低速道
@@ -243,24 +244,24 @@ class Vehicle(object):
         elif leftTimeToEnd < expectTimeCostLow and leftTimeToEnd > expectTimeCostHigh:
             # 剩下的时间走高速道可以到达
             if self.type == 'bus':
-                print('CHARGE LANE: bus change due to jam.')
+                #print('CHARGE LANE: bus change due to jam.')
                 self.change_lane = 1
                 self.laneType = "1"
             elif self.type == 'car' and self.valueTime > medianValueTime:
-                print('CHARGE LANE: Prior car change due to jam!')
+                #print('CHARGE LANE: Prior car change due to jam!')
                 self.change_lane = 1
                 self.laneType = "1"
         else:
             # 剩下的时间不充足
             if self.type == 'bus':
                 self.change_lane = 1
-                self.laneType = str(1 - int(self.laneType))
-                print('CHARGE LANE: bus change to high!')
+                self.laneType = "1"
+                #print('CHARGE LANE: bus change to high!')
 
 
         # Step 3: when the vehicle in node, make changing decision based on expecting finishing time.
-        if timeUseToFinishLane > timeInSecond:
-            return
+        #if timeUseToFinishLane > timeInSecond:
+        #    return
 
         #self.updateProbLaneChange(originTimeCost, timeUseToFinishLane, timeInSecond, medianValueTime, countTime)
         self.currentLane = self.network.typeGraphMap[self.laneType][
