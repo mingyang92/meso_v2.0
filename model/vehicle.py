@@ -38,15 +38,15 @@ class Vehicle(object):
         """
         This function judge whether the simulation starts
         :param ts: current time
-        :return: y/n
+        :return: boolean
         """
         return ts >= self.startTs
 
     def isFinish(self, ts):
         """
         This function judge whether the simulation finishes
-        :param ts: current time
-        :return: y/n
+        :param ts: current time stamp
+        :return: boolean
         """
         return not not self.finishTs
 
@@ -59,17 +59,21 @@ class Vehicle(object):
         return self.isBegin(ts) and not self.isFinish(ts)
 
     def __repr__(self):
-        return "<" + " ".join(["vehicle" + str(self.id), "type: " + self.type, "driver type: " + str(self.driverType),
-                         "maxSpeed: " + str(self.maxSpeed), "valueTime: " + str(self.valueTime),
-                         "prob of change: " + str(self.probLaneChange),
-                         "startTs: " + str(self.startTs), "nodeOrigin: " + str(self.nodeOrigin),
-                         "nodeDest: " + str(self.nodeDest), "change lane: " + str(self.change_lane),
-                         "current lane: " + str(self.currentLane)]) + ">"
+        return "<" + " ".join(["vehicle" + str(self.id), "type: " + self.type,
+                               "driver type: " + str(self.driverType),
+                               "maxSpeed: " + str(self.maxSpeed),
+                               "valueTime: " + str(self.valueTime),
+                               "prob of change: " + str(self.probLaneChange),
+                               "startTs: " + str(self.startTs),
+                               "nodeOrigin: " + str(self.nodeOrigin),
+                               "nodeDest: " + str(self.nodeDest),
+                               "change lane: " + str(self.change_lane),
+                               "current lane: " + str(self.currentLane)]) + ">"
 
     def updateShortestPath(self):
         """
         This function is to update next shortest path
-        :return:
+        :return: None
         """
         startNode = self.currentLane.link.node2 if self.currentLane else self.nodeOrigin #determine node1 of next lane
 
@@ -87,9 +91,10 @@ class Vehicle(object):
 
     def updateLocation(self, timeInSecond, delayType='fix'):
         """
-        This function updates the location of vehicle in LANE
-        :param timeInSecond
-        :return: currentLaneProcess
+        This function updates the location of vehicle in A LANE
+        :param timeInSecond: update time, gap
+        :param delayType: delaying type at the interaction
+        :return: None
         """
         remainingTime = timeInSecond
 
@@ -133,79 +138,39 @@ class Vehicle(object):
         self.currentLaneProgress += (self.currentLane.speed * remainingTime) / self.currentLane.link.lengthInKm / 3600.0
 
 
-    def updateProbLaneChange(self, originTimeCost, remainingTimeToFinish, timeInSecond, medianValueTime, countTime):
+    def updateProbLaneChange(self, medianValueTime):
         """
-        This function is to calculate the probability of changing lanes
-        :param originTimeCost: dictTimeCost[vehicleid]
-        :param remainingTimeToFinish: the remaining time to finish this lane
-        :param timeInSecond: step
-        :return:
+        This function is to calculate the probability of changing lanes.
+        目测暂时是用不到的
+        :param medianValueTime: the value of time for A vehicle
+        :return: None
         """
-        # TODO: TO RECORD THE CHANGE BEHAVIOUR
-        self.change_lane = 0
+        if self.valueTime >= medianValueTime:
 
-        #if self.currentLane.link.node2 == self.nodeDest:
-            # finish
-        #    self.finishTs = self.network.ts
-        #    self.currentLane = None
-        #    self.currentLaneProgress = None
-        #    print(self, "finished at", self.finishTs)
-        #    return
+            self.probLaneChange = self.probLaneChange * 2
 
-        if not self.bestLaneRoute:
-            return
-        # 至今为止还剩余的时间
-        leftTimeToEnd = originTimeCost - countTime * timeInSecond
-        expectTimeCostLow = remainingTimeToFinish + self.calculateExpTimeToEnd('0')
-        expectTimeCostHigh = remainingTimeToFinish + self.calculateExpTimeToEnd('1')
+            if self.probLaneChange > 1:
+                self.probLaneChange = 1
 
-        if leftTimeToEnd > expectTimeCostLow:
-            # 剩下的时间充足
-            if self.laneType == '1':
-                # 如果已经在高速道上，则换回道低速道
-                self.laneType = '0'
-                print('change to low')
-                self.change_lane = 1
+            if self.probLaneChange > 0.7 and self.laneType == '0':
+                self.laneType = '1'
+
             else:
-                # 如果在低速道上则保持在低速道
-                return
-        elif leftTimeToEnd < expectTimeCostLow and leftTimeToEnd > expectTimeCostHigh:
-            # 剩下的时间走高速道可以到达
-            self.change_lane = 1
-            print('Change to high~time')
-        else:
-            # 剩下的时间不充足
-            if self.type == 'bus':
-                self.change_lane = 1
-                print('Change to high!')
-            else:
-                if self.valueTime >= medianValueTime:
-                    self.probLaneChange = self.probLaneChange * 2
-                    if self.probLaneChange > 1:
-                        self.probLaneChange = 1
-
-                    if self.probLaneChange > 0.7 and self.laneType == '0':
-                        self.laneType = '1'
-                        self.change_lane = 1
-                        print('Change to high!~')
-                else:
-                    if self.laneType == '1':
-                        self.laneType = '0'
-                        self.change_lane = 1
-                        print('Change from high to low')
-
-
-
+                if self.laneType == '1':
+                    self.laneType = '0'
 
     def changeLane(self, originTimeCost, timeInSecond, medianValueTime, countTime, NO_CHARGE=False):
-        # this function returns a result of whether to change to a faster and more expensive lane-network at
-        # a current time stamp after obtaining its current location.
-        # this function is only used when the vehicle is not in the last section to its destination; this is
-        # an if-condition in the main program
-        # check the left time budget and the value of time to decide the lane-changing probability
-        # 是否换道的决策取决于换道的概率：1.在fast上，如果换道的概率小于等于0.5，则换到低速道上；2.在slow上，如果概率大于0.5，则换到
-        # 高速上
-        # timeInSecond: step
+        """
+        this function returns a result of whether to change to a faster and more expensive lane-network at a current
+        time stamp after obtaining its current location.
+        是否换道的决策取决于换道的概率：1.在fast上，如果换道的概率小于等于0.5，则换到低速道上；2.在slow上，如果概率大于0.5，则换到高速上
+        :param originTimeCost: the total time used at current location
+        :param timeInSecond: time stamp
+        :param medianValueTime: median value
+        :param countTime: decision should be made countTime sec before entering the interaction
+        :param NO_CHARGE: if True, both lane are free of charge
+        :return: None
+        """
 
         # Step 1: whether it is in the final link
         if self.currentLane.link.node2 == self.nodeDest:
@@ -216,60 +181,88 @@ class Vehicle(object):
             print(self, "finished at", self.finishTs)
             return
 
-        # Step 2: if not in the final link, then calculate the finish time
-        # if the speed of current lane < 1 and the speed of neighbor lane > 1, the change.
-        timeUseToFinishLane = 3600.0 * (
-                            1.0 - self.currentLaneProgress) * self.currentLane.link.lengthInKm / self.currentLane.speed
-
-        if NO_CHARGE==True:
-            neighborLaneSpeed = self.network.typeGraphMap[str(1 - int(self.laneType))][
-                self.currentLane.link.node1.id][self.currentLane.link.node2.id].speed
-            timeUseToFinishLane_neighbor = 3600.0 * (
-                    1.0 - self.currentLaneProgress) * self.currentLane.link.lengthInKm / neighborLaneSpeed
-            if timeUseToFinishLane_neighbor < timeUseToFinishLane:
-                #print('change to neighbor lane!')
-                if self.type == 'bus':
-                    print("bus change lane!")
-                    self.change_lane = 1
-                    self.laneType = str(1 - int(self.laneType))
-                elif self.type == 'car': #and self.valueTime > medianValueTime:
-                    print("car change lane!")
-                    self.change_lane = 1
-                    self.laneType = str(1 - int(self.laneType))
+        if not self.bestLaneRoute:
+            #print('Best route not found!')
             return
-        #print("error in vehicle!")
 
+        self.change_lane = 0
+        leftTimeToEnd = originTimeCost  # 至今为止还剩余的时间
+        timeUseToFinishLane = (3600.0 * (
+                            1.0 - self.currentLaneProgress) * self.currentLane.link.lengthInKm / self.currentLane.speed) \
+                            - countTime * timeInSecond
+        expectTimeCostLow = timeUseToFinishLane + self.calculateExpTimeToEnd('0')
+        expectTimeCostHigh = timeUseToFinishLane + self.calculateExpTimeToEnd('1')
+        neighborLaneSpeed = self.network.typeGraphMap[str(1 - int(self.laneType))][
+            self.currentLane.link.node1.id][self.currentLane.link.node2.id].speed
+
+        # Step 2: if not in the final link, then calculate the finish time
+        # 对于两种情况，当道路发生堵车时
         if self.currentLane.speed < 1:
-            neighborLaneSpeed = self.network.typeGraphMap[str(1-int(self.laneType))][
-                self.currentLane.link.node1.id][self.currentLane.link.node2.id].speed
-            #print('vehicle', self.id, self.currentLane, 'before')
             if neighborLaneSpeed < 1:
                 #print('neigborLane', neighborLaneSpeed)
-                print('Neighbor lane is jam!!! Stay in the current lane!!!')
-                #print('vehicle', self.id, self.currentLane)
+                print('Neighbor lane is congest，stay in the current lane!')
+                self.currentLane = self.network.typeGraphMap[self.laneType][
+                    self.currentLane.link.node1.id][self.currentLane.link.node2.id]
                 return
-            if self.type == 'bus':
-                print('Bus change due to jam!')
-                prev_lane = self.laneType
-                self.change_lane = 1
-                self.laneType = str(1-int(self.laneType))
-                #print('vehicle id ' + str(self.id), 'bus: Jam ans change!!!', 'prev:', prev_lane)
-            elif self.type == 'car' and self.valueTime > medianValueTime :
-                print('Prior car change due to jam!')
-                prev_lane = self.laneType
-                self.change_lane = 1
-                self.laneType = str(1-int(self.laneType))
-                #print('vehicle id '+str(self.id), 'car: Jam ans change!!!','prev:', prev_lane)
+
+        # In the case of no charge lane
+        if NO_CHARGE==True:
+            # no charge的情况下，换道的判断仅限于当前路段。
+            neighborLaneSpeed = self.network.typeGraphMap[str(1 - int(self.laneType))][
+                self.currentLane.link.node1.id][self.currentLane.link.node2.id].speed
+            timeUseToFinishLane_neighbor = (3600.0 * (
+                    1.0 - self.currentLaneProgress) * self.currentLane.link.lengthInKm / neighborLaneSpeed) \
+                                           - countTime * timeInSecond
+
+            if timeUseToFinishLane_neighbor < timeUseToFinishLane:
+                if self.type == 'bus':
+                    print("NO CHARGE LANE: bus change lane!")
+                    self.change_lane = 1
+                    self.laneType = str(1 - int(self.laneType))
+                elif self.type == 'car' and self.valueTime > medianValueTime:
+                    print("NO CHARGE LANE: car change lane!")
+                    self.change_lane = 1
+                    self.laneType = str(1 - int(self.laneType))
+            else:
+                print('NO CHARGE LANE: stay at current lane!')
             self.currentLane = self.network.typeGraphMap[self.laneType][
                 self.currentLane.link.node1.id][self.currentLane.link.node2.id]
-            #print('vehicle', self.id, self.currentLane, 'after')
-            return
+            return print('end no charge loop!')
+
+        # In the case of charge lane
+        if leftTimeToEnd > expectTimeCostLow:
+            # 剩下的时间充足
+            if self.laneType == '1':
+                # 如果已经在高速道上，则换回道低速道
+                self.laneType = '0'
+                print('CHARGE LANE: change to low speed lane.')
+                self.change_lane = 1
+            else:
+                # 如果在低速道上则保持在低速道
+                return
+        elif leftTimeToEnd < expectTimeCostLow and leftTimeToEnd > expectTimeCostHigh:
+            # 剩下的时间走高速道可以到达
+            if self.type == 'bus':
+                print('CHARGE LANE: bus change due to jam.')
+                self.change_lane = 1
+                self.laneType = "1"
+            elif self.type == 'car' and self.valueTime > medianValueTime:
+                print('CHARGE LANE: Prior car change due to jam!')
+                self.change_lane = 1
+                self.laneType = "1"
+        else:
+            # 剩下的时间不充足
+            if self.type == 'bus':
+                self.change_lane = 1
+                self.laneType = str(1 - int(self.laneType))
+                print('CHARGE LANE: bus change to high!')
+
 
         # Step 3: when the vehicle in node, make changing decision based on expecting finishing time.
         if timeUseToFinishLane > timeInSecond:
             return
 
-        self.updateProbLaneChange(originTimeCost, timeUseToFinishLane, timeInSecond, medianValueTime, countTime)
+        #self.updateProbLaneChange(originTimeCost, timeUseToFinishLane, timeInSecond, medianValueTime, countTime)
         self.currentLane = self.network.typeGraphMap[self.laneType][
             self.currentLane.link.node1.id][self.currentLane.link.node2.id]
 
@@ -283,7 +276,6 @@ class Vehicle(object):
         '''
         # 计算现在条件下到达终点的预期时间
         # 计算是从下一条道开始
-        # TODO: SHOULD ADD DELAYING TIME
         expTime = 0
         for laneid in self.bestLaneRoute.keys():
             #print('lane id is:', laneid)
