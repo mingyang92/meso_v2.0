@@ -98,6 +98,14 @@ class Vehicle(object):
         """
         remainingTime = timeInSecond
 
+        if self.currentLane.link.node2 == self.nodeDest and remainingTime < 1:
+            # finish
+            self.finishTs = self.network.ts
+            self.currentLane = None
+            self.currentLaneProgress = None
+            print(self, "finished at", self.finishTs)
+            return
+
         while True:
             # if self.id == 1: print(self.currentLane, self.currentLaneProgress, self.bestLaneRoute)
             timeUseToFinishLane = 3600.0 * (
@@ -172,14 +180,8 @@ class Vehicle(object):
         :return: None
         """
 
+
         # Step 1: whether it is in the final link
-        if self.currentLane.link.node2 == self.nodeDest:
-            # finish
-            self.finishTs = self.network.ts
-            self.currentLane = None
-            self.currentLaneProgress = None
-            print(self, "finished at", self.finishTs)
-            return
 
         if not self.bestLaneRoute:
             #print('Best route not found!')
@@ -188,8 +190,8 @@ class Vehicle(object):
         self.change_lane = 0
         leftTimeToEnd = originTimeCost  # 至今为止还剩余的时间
         timeUseToFinishLane = (3600.0 * (
-                            1.0 - self.currentLaneProgress) * self.currentLane.link.lengthInKm / self.currentLane.speed) \
-                            - countTime * timeInSecond
+                1.0 - self.currentLaneProgress) * self.currentLane.link.lengthInKm / self.currentLane.speed) \
+                              - countTime * timeInSecond
         expectTimeCostLow = timeUseToFinishLane + self.calculateExpTimeToEnd('0')
         expectTimeCostHigh = timeUseToFinishLane + self.calculateExpTimeToEnd('1')
         neighborLaneSpeed = self.network.typeGraphMap[str(1 - int(self.laneType))][
@@ -219,7 +221,7 @@ class Vehicle(object):
                     #print("NO CHARGE LANE: bus change lane!")
                     self.change_lane = 1
                     self.laneType = str(1 - int(self.laneType))
-                elif self.type == 'car' and self.valueTime > medianValueTime:
+                elif self.type == 'car': #and self.valueTime > medianValueTime
                     #print("NO CHARGE LANE: car change lane!")
                     self.change_lane = 1
                     self.laneType = str(1 - int(self.laneType))
