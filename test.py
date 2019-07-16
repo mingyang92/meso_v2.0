@@ -28,12 +28,13 @@ def serializeVehicle(ve):
     return {'id': ve.id, 'type': ve.type, 'driverType': ve.driverType, 'maxSpeed': ve.maxSpeed,
         'valueTime': ve.valueTime, 'probLaneChange': ve.probLaneChange, 'startTs': timestamp(ve.startTs),
         'nodeOrigin_id': ve.nodeOrigin.id, 'nodeDest_id': ve.nodeDest.id, 'finishTs': timestamp(ve.finishTs),
-        'laneType': ve.laneType, 'currentLane_id': ve.currentLane.id, 'currentLaneProgress': ve.currentLaneProgress,
+        'laneType': ve.laneType, 'currentLane_id': ve.currentLane.id if ve.currentLane else None, 'currentLaneProgress': ve.currentLaneProgress,
         'timeBudget': ve.timeBudget, 'changeLane': ve.change_lane}
 
 def serializeNetwork(network):
     return {'ts': timestamp(network.ts), 'lanes': { l.id: serializeLane(l) for l in network.idLaneMap.values() },
-        'vehicles': { v.id: serializeVehicle(v) for v in network.idVehicleMap.values() if v.isRunning(network.ts)}}
+        'vehicles': { v.id: serializeVehicle(v) for v in network.idVehicleMap.values() if v.isRunning(network.ts)},
+        'endVehicles': { v.id: serializeVehicle(v) for v in network.idVehicleMap.values() if v.isFinish(network.ts)} }
 
 
 # calculation time
@@ -47,10 +48,10 @@ medianValueTime = 50
 random.seed(10)
 
 vehicleId = 0
-GEN_VEH_DIST = 'uniform' # ["uniform", "random", "random_whole", "normal_whole"]
+GEN_VEH_DIST = 'normal_whole' # ["uniform", "random", "random_whole", "normal_whole"]
 STRATEGY = 'vol_sim' # ['vol_sim', 'vol_dist', 'random', 'fix']
-MULTIVEH = 3 #[default=1, 2, 3,...]
-NO_CHARGE = False
+MULTIVEH = 2 #[default=1, 2, 3,...]
+NO_CHARGE = True
 
 network = Network(startTs)
 
@@ -82,7 +83,7 @@ dictTimeCost = {}
 
 countTime = 5 # 到路口前提前多少秒做判断
 FILE_NUMBER = 0
-GAP_TS = 5
+GAP_TS = 10
 
 for i in range(totalSteps):
     network = networks[-1] # current network
