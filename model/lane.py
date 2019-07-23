@@ -48,8 +48,10 @@ class Lane(object):
     def travelTimeInSec(self):
         """
         This function calculates the TRAVEL TIME for this LANE IN ? SPEED
+        Currently not used!!!!
         :return: travel time
         """
+        # TODO: why this function
         return self.freeTimeInSec() * 1.25 #magic number
 
     def updatePropertiesBasedOnPcu(self):
