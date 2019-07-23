@@ -216,18 +216,6 @@ class Vehicle(object):
                     1.0 - self.currentLaneProgress) * self.currentLane.link.lengthInKm / neighborLaneSpeed) \
                                            - countTime * timeInSecond
 
-            if timeUseToFinishLane_neighbor < timeUseToFinishLane:
-                if self.type == 'bus':
-                    #print("NO CHARGE LANE: bus change lane!")
-                    self.change_lane = 1
-                    self.laneType = str(1 - int(self.laneType))
-                elif self.type == 'car': #and self.valueTime > medianValueTime
-                    #print("NO CHARGE LANE: car change lane!")
-                    self.change_lane = 1
-                    self.laneType = str(1 - int(self.laneType))
-            #else:
-                #print('NO CHARGE LANE: stay at current lane!')
-
             self.currentLane = self.network.typeGraphMap[self.laneType][
                 self.currentLane.link.node1.id][self.currentLane.link.node2.id]
             return
