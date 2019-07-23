@@ -215,6 +215,9 @@ class Vehicle(object):
             timeUseToFinishLane_neighbor = (3600.0 * (
                     1.0 - self.currentLaneProgress) * self.currentLane.link.lengthInKm / neighborLaneSpeed) \
                                            - countTime * timeInSecond
+            if timeUseToFinishLane_neighbor < timeUseToFinishLane:
+                self.change_lane = 1
+                self.laneType = str(1 - int(self.laneType))
 
             self.currentLane = self.network.typeGraphMap[self.laneType][
                 self.currentLane.link.node1.id][self.currentLane.link.node2.id]
