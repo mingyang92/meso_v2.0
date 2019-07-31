@@ -18,11 +18,12 @@ This is a simulation framework designed for analyzing the vehicle behavior to th
 
 ## 1. Network
 
-This module import the network and vehicle generation information from **CSV format data**. The default case in this simulation is Sioux-Falls Network (xxx).
+This module reads the network and vehicle generation information from **CSV format data**. The default case in this simulation is Sioux-Falls Network (xxx).  You should not change this part if you want to use the default simulation setting. If you want to use other network, please transfer your network information as the data format shown in the following part.
 
 The required variables for **vehicle generation** data are:
 
 ```python
+# Vehicle generation data format
 time_slot, vehicle_type, Origin (node id), Destination (node id), volume
 7.00-7.04, car, 12, 1, 6
 ```
@@ -30,22 +31,25 @@ time_slot, vehicle_type, Origin (node id), Destination (node id), volume
 The require variables for **network generation** are:
 
 ```python
+# Network generation data format
 # Lane
 lanetype, laneid, nodeid1, nodeid2, linkid, linktype, freespeed, freetraveltime, fixedcharge
-0, 1, 1, 2, 1, 2, 40, 0.1, 0.1
+0, 1, 1, 2, 1, 2, 60, 0.1, 0.1
 
 # Node
-nodeid, nodetype, coortype, corrX, corrY
+nodeid, nodetype, coortype?, corrX, corrY
 1, 2, 1, 500, 5100
 ```
 
-*You should not change this part if you want to use the default simulation setting.*
+*The variable name with "?" (e.g. coortype?) *are currently not used.*
 
 
 
 ## 2. Structure
 
-This part introduces the main components of the code. Basically, there are 5 major parts for running the basic scenario and 1 additional part that is designed for the extension case.
+This part introduces the main components of the code. 
+
+Basically, there are 5 major parts for running the basic scenario and one additional part that is designed for the extension case.
 
 
 
@@ -102,7 +106,7 @@ Vehicle.valueTime
 
 # var probability of changing lane
 # the starting value are generated based on driver type.
-# if driver type == 1: prob >= 0.5; else: prob < 0.5
+# 这个方程目前没有在使用，实际上应该根据不同的车辆和道路属性对这个值进行更新。
 Vehicle.probLaneChange
 
 # var vehicle's starting time stamp
@@ -185,7 +189,8 @@ Lane.type
 Lane.link
 
 # var the free speed of current lane
-# charge: 60 km/h; no charge: 40 km/h
+# 60 km/h
+# 假设每条lane 的最高时速上限
 Lane.freeSpeed
 
 # var the travel time calculated in free speed for the current lane
@@ -215,19 +220,19 @@ The detail description for these two algorithm will not be explained in this doc
 
 ### Dijkstra
 
-The explanation by wikipedia: [https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm](https://en.wikipedia.org/wiki/Dijkstra's_algorithm)
+The explanation by Wikipedia: [https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm](https://en.wikipedia.org/wiki/Dijkstra's_algorithm)
 
 
 
 ### A*
 
-The explanation by wekipedia: [https://en.wikipedia.org/wiki/A*_search_algorithm](https://en.wikipedia.org/wiki/A*_search_algorithm)
+The explanation by Wikipedia: [https://en.wikipedia.org/wiki/A*_search_algorithm](https://en.wikipedia.org/wiki/A*_search_algorithm)
 
 
 
 ### Other route search algorithm (option)
 
-This framework allows you to specify your own route search algorithm. However, the algorithm should follow the format of the previous two algorithm (e.g. parameters) to make sure the whole simulation process can work as expecting.
+This framework allows you to specify your own route search algorithm. However, the algorithm should follow the format of the previous two algorithms (e.g. parameters) to make sure the whole simulation process can work as expecting.
 
 
 
@@ -247,17 +252,19 @@ from lib.Dijkstra2 import bestLaneBestNodeTimeCost
 
 ### Document
 
-The default output format is **JSON**. You can also export the records in any format as you wish.
+The default output format is  **JSON**. You can also export the records in any format as you wish.
 
 All the information in the class mentioned in the previous part can be export.
+
+*Since all the information will be record in default settings, the size of output would be really large and make it difficult to load into memory the next time you want to use it. Therefore, currently we divided the  the output file into several sub-files. **Be sure you load ALL files when you use them.***
 
 
 
 ### Figure
 
-The plotting function is written for the default file format (JSON). Unless you want to plot the same figure, basically you need to write the function by yourself.
+The plotting function is written for the default file format (JSON). Unless you want to plot the same figure, you should write the function by yourself.
 
-[plot]
+All the example in this documents are drawn by python package **Plotly**. Please check the website of Plotly for examples of using this package. https://plot.ly/python/
 
 
 
@@ -271,9 +278,9 @@ Python 3.6.X or higher version is recommended. A sample is provided in ***test.p
 
 ### Scenarios
 
-**Test scenario:**  we assume that there are two types of lanes for each link (high-speed lane *HSL* and low-speed lane *LSL*).  LSL is free of charge for all types of vehicles. HSL is free for buses but not for passenger cars, and the fee is calculated on the total travel time on HSL.
+**Test scenario:**  we assume that there are two lanes for each link.  One lane is free of charge for all types of vehicles. The other is free for buses but not for passenger cars, and the fee is calculated on the total travel time on charged lane.
 
-**Basic scenario: ** we assume that there are two types of lanes for each link (high-speed lane *HSL* and low-speed lane *LSL*). In this scenario, both two types of lanes are free of charge for all types of vehicles.
+**Basic scenario: ** we assume that there are two lanes for each link. In this scenario, both two types of lanes are free of charge for all types of vehicles.
 
 
 
@@ -328,7 +335,7 @@ medianValueTime = 50
 
 # vehicle generation distribution
 # options: "uniform", "random", "random_whole", "normal_whole"
-GEN_VEH_DIST = 'uniform' 
+GEN_VEH_DIST = 'normal_whole' 
 
 # delay strategy at interations
 # options: 'vol_sim', 'vol_dist', 'random', 'fix'
@@ -351,3 +358,32 @@ GAP_TS = 5
 
 
 
+### Results
+
+#### a. Vehicle Generation by Time
+
+![](C:\Users\lyy90\OneDrive\Documents\GitHub\meso_v2.0\Vehicle Generation.png)
+
+
+
+#### b. Travel time comparison
+
+Positive time difference means **"introducing charged lane system increase the travel time of specific vehicle"**.
+
+
+
+![](C:\Users\lyy90\OneDrive\Documents\GitHub\meso_v2.0\Travel Time Difference.png)
+
+![](C:\Users\lyy90\OneDrive\Documents\GitHub\meso_v2.0\Travel Time Difference 2.png)
+
+![](C:\Users\lyy90\OneDrive\Documents\GitHub\meso_v2.0\Travel Time Difference 3.png)
+
+Most of the vehicles have longer travel time in **Charged Lane** scenario. Which means the current strategy is not so efficient.
+
+
+
+#### c. Travel Speed by Time Stamp
+
+We show the travel speed as an example here. You can use any feature you want.
+
+![](C:\Users\lyy90\OneDrive\Documents\GitHub\meso_v2.0\Mean Speed.png)
