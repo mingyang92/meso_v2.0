@@ -145,14 +145,23 @@ class Vehicle(object):
         #update location
         self.currentLaneProgress += (self.currentLane.speed * remainingTime) / self.currentLane.link.lengthInKm / 3600.0
 
+    def calculateLaneChangeCost(self):
+        """
+        This function is to calculate the change lane probability.
+        TODO:这个方程用于计算换道概率。
+        :return:
+        """
+        pass
 
     def updateProbLaneChange(self, medianValueTime):
         """
-        This function is to calculate the probability of changing lanes.
-        目测暂时是用不到的
+        TODO:This function is to calculate the probability of changing lanes.
+        由于现在用的是随机生成的时间成本，因此这个方程暂时还用不上。实际上，换道的侧率应基于价格，时间等因素计算出一个概率。
+        目前还没有合理假设，因此这个方程没有实用。
         :param medianValueTime: the value of time for A vehicle
         :return: None
         """
+
         if self.valueTime >= medianValueTime:
 
             self.probLaneChange = self.probLaneChange * 2
@@ -226,8 +235,8 @@ class Vehicle(object):
         # In the case of charge lane
         if leftTimeToEnd > expectTimeCostLow:
             # 剩下的时间充足
-            if self.laneType == '1':
-                # 如果已经在高速道上，则换回道低速道
+            if self.laneType == '1' and self.valueTime <= medianValueTime:
+                # 如果已经在收费道上，则换回到普通道
                 self.laneType = '0'
                 #print('CHARGE LANE: change to low speed lane.')
                 self.change_lane = 1

@@ -160,4 +160,3 @@ for i in range(totalSteps):
 
 elapsed = (time.process_time() - calculationStart)
 print('The total calculation time is:', elapsed, 'seconds')
-

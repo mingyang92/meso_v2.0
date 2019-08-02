@@ -16,9 +16,17 @@ This is a simulation framework designed for analyzing the vehicle behavior to th
 
 
 
+
+
 ## 1. Network
 
-This module reads the network and vehicle generation information from **CSV format data**. The default case in this simulation is Sioux-Falls Network (xxx).  You should not change this part if you want to use the default simulation setting. If you want to use other network, please transfer your network information as the data format shown in the following part.
+This module reads the network and vehicle generation information from **CSV format data**. The default case in this simulation is Sioux-Falls Network (xxx).  
+
+![](C:\Users\lyy90\OneDrive\Documents\GitHub\meso_v2.0\Sioux Falls network\SiouxFalls.jpg)
+
+*You should not change this part if you want to use the default simulation setting. If you want to use other network, please transfer your network information as the data format shown in the following part.*
+
+
 
 The required variables for **vehicle generation** data are:
 
@@ -41,7 +49,9 @@ nodeid, nodetype, coortype?, corrX, corrY
 1, 2, 1, 500, 5100
 ```
 
-*The variable name with "?" (e.g. coortype?) *are currently not used.*
+*The variable name with "?" (e.g. coortype?) are currently not used.*
+
+
 
 
 
@@ -75,6 +85,28 @@ Network.idVehicleMap
 
 # dict containing lane type info
 Network.typeGraphMap
+
+# func register Node info in the current network
+Network.registerNode(node)
+
+# func register Link info in the current network
+Network.registerLink(link)
+
+# func register Lane info in the current network
+Network.registerLane(lane)
+
+# func register Vehicle info in the current network
+Network.registerVehicle(vehicle)
+
+# func update lane feature in the current network
+Network.updateLanes()
+
+# func count running vehicle in the current network
+Network.runningVehicleCount()
+
+# func count finished vehicle in the current network
+Network.finishVehicleCount()
+
 ```
 
 
@@ -120,6 +152,35 @@ Vehicle.nodeDest
 
 # dict the network info of current time stamp
 Vehicle.network
+
+# func decide whether the vehicle start running in the current time stamp
+Vehicle.isBegin(ts)
+
+# func decide whether the vehicle finish it trip in the curreny time stamp
+Vehicle.isFinish(ts)
+
+# func decide whether the vehicle is running in the current time stamp
+Vehicle.isRunning(ts)
+
+# func updathe the shortest path for vehicle
+Vehicle.updateShortestPath()
+
+# func update the location of vehicle in the lane
+# param timeInSecond: time period for updating location, default is 1s.
+Vehicle.updateLocation(timeInSecond, delayType)
+    
+# func calculate cost of lane change for each vehicle (option)
+# TODO: this function should consider the different feature that will influence the lane change behaviors.
+# This function can be included in the following one
+Vehicle.LaneChangeCost()
+
+# func update the probability for each vehicle (need update!!!)
+# TODO: calculte the probability of changing lane (e.g. descrete choice model)
+Vehicle.updateProbLaneChange(medianValueTime)
+
+# func decide whether the vehicle should change lane
+Vehicle.changeLane(param...)
+
 ```
 
 
@@ -169,6 +230,12 @@ Node.y
 
 # dict the current network
 Node.network
+
+# func calculte the Euclideau distance between 2 nodes
+Node.dist(node)
+
+# func calculate Manhattan distance between 2 nodes
+Node.manhattanDist(node)
 ```
 
 
@@ -190,7 +257,6 @@ Lane.link
 
 # var the free speed of current lane
 # 60 km/h
-# 假设每条lane 的最高时速上限
 Lane.freeSpeed
 
 # var the travel time calculated in free speed for the current lane
@@ -204,13 +270,21 @@ Lane.speed
 
 # dict the current network
 Lane.network
+
+# func update lane property based on PCU
+Lane.updatePropertiesBasedOnPcu()
+
+# func calculation delay time by different type of delay strategies
+Lane.delayCalculation(strategy)
 ```
 
 
 
-### Class Turn (add.)
+### Class Turn (under development)
 
 This class contains the information related to **Turning Behavior**.
+
+
 
 
 
@@ -248,9 +322,11 @@ from lib.Dijkstra2 import bestLaneBestNodeTimeCost
 
 
 
+
+
 ## 4. Output
 
-### Document
+### Output file
 
 The default output format is  **JSON**. You can also export the records in any format as you wish.
 
@@ -264,7 +340,9 @@ All the information in the class mentioned in the previous part can be export.
 
 The plotting function is written for the default file format (JSON). Unless you want to plot the same figure, you should write the function by yourself.
 
-All the example in this documents are drawn by python package **Plotly**. Please check the website of Plotly for examples of using this package. https://plot.ly/python/
+All the example in this documents are drawn by python package **Plotly**. Please check the website of **Plotly** for examples of using this package. https://plot.ly/python/
+
+
 
 
 
@@ -286,7 +364,13 @@ Python 3.6.X or higher version is recommended. A sample is provided in ***test.p
 
 ### Process
 
-This is a simple explanation for the simulation process in **test.py**. For more details, please have a look at the code.
+This is a simple explanation for the simulation process in **test.py**. For more details, please have a look at the flow chart and code.
+
+
+
+![](C:\Users\lyy90\OneDrive\Documents\GitHub\meso_v2.0\flow chart.png)
+
+
 
 ```python
 for i in range(totalSteps):
@@ -360,9 +444,9 @@ GAP_TS = 5
 
 ### Results
 
-#### a. Vehicle Generation by Time
+#### a. Vehicle Generation by Time Stamp
 
-![](C:\Users\lyy90\OneDrive\Documents\GitHub\meso_v2.0\Vehicle Generation.png)
+![](C:\Users\lyy90\OneDrive\Documents\GitHub\meso_v2.0\Vehicle Number by Time Stamp.png)
 
 
 
