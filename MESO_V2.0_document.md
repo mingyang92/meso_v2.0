@@ -2,7 +2,7 @@
 
 This document is a reference for MESO V2.0 simulation. A earlier version of this simulation framework by Dr. GONG Lei can be found in MESO V1.0 (2017).
 
-The final update is on 2019/08/31 by LI, Yanyan (https://github.com/lyy901207/meso_v2.0). 
+The final update is on 2019/08/31 by LI, Yanyan (https://github.com/lyy901207/meso_v2.0).  The latest version can be download in my Github.
 
 
 
@@ -14,7 +14,7 @@ The final update is on 2019/08/31 by LI, Yanyan (https://github.com/lyy901207/me
 
 This is a simulation framework designed for analyzing the vehicle behavior to the whole road network. This new version allows you to build up the vehicle behavior by yourself as well as modify the road network setting easily. The detail description for module structure and example can be found in the following parts.
 
-
+In the current stage, the main object for this simulation framework is to evaluate the efficiency of lane-charge system. Congestion charge aims to reduce the traffic congestion in the city, and it has been implemented in several areas. Zonal charge (i.e. when you entered the charge zone, you need to pay) and toll charge (e.g. highway) is the domaining charging system recently. With the development of GIS technology, it is possible to charge vehicles by their willingness to pay for avoiding congestion (value of time). That is, if you want to pay more money, you can enjoy better traffic condition. This simulation platform can be used for evaluating the proposed charging system.
 
 
 
@@ -50,8 +50,6 @@ nodeid, nodetype, coortype?, corrX, corrY
 ```
 
 *The variable name with "?" (e.g. coortype?) are currently not used.*
-
-
 
 
 
@@ -286,8 +284,6 @@ This class contains the information related to **Turning Behavior**.
 
 
 
-
-
 ## 3. Route Search Algorithm
 
 The detail description for these two algorithm will not be explained in this document. If you are interested in them, please click the links which can give you more information.
@@ -341,8 +337,6 @@ All the information in the class mentioned in the previous part can be export.
 The plotting function is written for the default file format (JSON). Unless you want to plot the same figure, you should write the function by yourself.
 
 All the example in this documents are drawn by python package **Plotly**. Please check the website of **Plotly** for examples of using this package. https://plot.ly/python/
-
-
 
 
 
@@ -444,9 +438,23 @@ GAP_TS = 5
 
 ### Results
 
+In this part, 2 different scenarios (uniform and normal) are shown as an example.
+
+*<Note: 1 refers to 2078 vehicles; 2 refers to 4156; 3 refers to 6234.>*
+
+
+
 #### a. Vehicle Generation by Time Stamp
 
+【Normal】
+
 ![](C:\Users\lyy90\OneDrive\Documents\GitHub\meso_v2.0\Vehicle Number by Time Stamp.png)
+
+【Uniform】
+
+![](C:\Users\lyy90\OneDrive\Documents\GitHub\meso_v2.0\Vehicle Number by Time Stamp Uniform.png)
+
+
 
 
 
@@ -456,13 +464,37 @@ Positive time difference means **"introducing charged lane system increase the t
 
 
 
-![](C:\Users\lyy90\OneDrive\Documents\GitHub\meso_v2.0\Travel Time Difference.png)
+【Normal】
 
-![](C:\Users\lyy90\OneDrive\Documents\GitHub\meso_v2.0\Travel Time Difference 2.png)
+![](C:\Users\lyy90\OneDrive\Documents\GitHub\meso_v2.0\Travel Time Difference (2078).png)
 
-![](C:\Users\lyy90\OneDrive\Documents\GitHub\meso_v2.0\Travel Time Difference 3.png)
+![](C:\Users\lyy90\OneDrive\Documents\GitHub\meso_v2.0\Travel Time Difference (4156).png)
 
-Most of the vehicles have longer travel time in **Charged Lane** scenario. Which means the current strategy is not so efficient.
+![](C:\Users\lyy90\OneDrive\Documents\GitHub\meso_v2.0\Travel Time Difference (6234).png)
+
+
+
+【Uniform】
+
+![](C:\Users\lyy90\OneDrive\Documents\GitHub\meso_v2.0\Travel Time Difference (2078) Uniform.png)
+
+![](C:\Users\lyy90\OneDrive\Documents\GitHub\meso_v2.0\Travel Time Difference (4156) Uniform.png)
+
+![](C:\Users\lyy90\OneDrive\Documents\GitHub\meso_v2.0\Travel Time Difference (6234) Uniform.png)
+
+
+
+| Number of Vehicle (normal) |  bus  |  car  |  total (mean, std)  |
+| :------------------------: | :---: | :---: | :-----------------: |
+|            2078            | 0.364 | 0.321 |  (59.105, 107.784)  |
+|            4156            | 0.457 | 0.426 | (165.682, 1160.639) |
+|            6234            | 0.474 | 0.425 | (99.084, 1345.709 ) |
+
+| Number of Vehicle (uniform) |  bus  |  car  |  total (mean, std)  |
+| :-------------------------: | :---: | :---: | :-----------------: |
+|            2078             | 0.336 | 0.264 |  (81.091, 98.976)   |
+|            4156             | 0.416 | 0.357 | (104.701, 393.750)  |
+|            6234             | 0.546 | 0.439 | (-15.801, 2070.783) |
 
 
 
@@ -470,4 +502,38 @@ Most of the vehicles have longer travel time in **Charged Lane** scenario. Which
 
 We show the travel speed as an example here. You can use any feature you want.
 
-![](C:\Users\lyy90\OneDrive\Documents\GitHub\meso_v2.0\Mean Speed.png)
+【Normal】
+
+![](C:\Users\lyy90\OneDrive\Documents\GitHub\meso_v2.0\Mean Speed for Lanes.png)
+
+【Uniform】
+
+![](C:\Users\lyy90\OneDrive\Documents\GitHub\meso_v2.0\Mean Speed for Lanes Uniform.png)
+
+
+
+#### d. Charge-Lane Usage Rate
+
+【Normal】
+
+![](C:\Users\lyy90\OneDrive\Documents\GitHub\meso_v2.0\Charge-lane Usage Rate by Time Stamp.png)
+
+【Uniform】
+
+![](C:\Users\lyy90\OneDrive\Documents\GitHub\meso_v2.0\Charge-lane Usage Rate by Time Stamp_uniform.png)
+
+
+
+## 6. Possible Extension
+
+**a. Change-lane decision function can be extended**: currently the value of time is generated randomly by normal distribution, and the lane change probability is only determined by the value of time.
+
+**b. Change-lane period**: in the current state, the lane-change period is fixed (every 5 sec). This decision period should be adjusted based on other feature (e.g. traffic condition).
+
+**c. Interaction and car following behaviors**: we did not considered the interaction and car following behaviors in this simulation, but they should be included.
+
+**d. The lane usage price**: since we generate the value of time directly that we consider the lane usage price have already been included in the value of time. However, this assumption needs to be extended and dynamic pricing can be used in this case.
+
+**e. Personalized route recommendation**: not only lane-change decision but also route recommendation can be personalized. For example, in the A* algorithm you can try to transform traffic feature as well as personal preference as *heuristic distance (estimated cost to the destination)*. You can even calculated them by using some statistical models. BUT, the route search process is really time consuming, if you want to consider complex structure, methods aiming to reduce calculation complexity are recommended (e.g. RNN-A*).
+
+**f. Vehicle generation**: vehicle generation way and location has great impacts on travel speed, then affect the travel speed. Different vehicle generation methods should be tested to validate the results.
