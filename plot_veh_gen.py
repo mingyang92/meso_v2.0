@@ -20,7 +20,7 @@ medianValueTime = 50
 random.seed(10)
 
 vehicleId = 0
-GEN_VEH_DIST = 'uniform_whole' # ["uniform", "random", "random_whole", "normal_whole"]
+GEN_VEH_DIST = 'normal_whole' # ["uniform", "random", "random_whole", "normal_whole", "uniform_whole"]
 STRATEGY = 'vol_sim' # ['vol_sim', 'vol_dist', 'random', 'fix']
 MULTIVEH = 1 #[default=1, 2, 3,...]
 NO_CHARGE = False
@@ -44,7 +44,7 @@ genVehicle(tsPairNodePairTypeMap, GEN_VEH_DIST, vehicleId, medianValueTime, netw
 t = sorted([vehicle.startTs for vehicle in network.idVehicleMap.values()])
 
 
-with open(GEN_VEH_DIST+'output.csv', mode='w', newline='') as csv_file:
+with open(GEN_VEH_DIST+'_output.csv', mode='w', newline='') as csv_file:
     fieldnames = ['vid', 'start_time']
     writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
     writer.writeheader()
