@@ -139,7 +139,8 @@ for i in range(totalSteps):
 
         #f_path = 'visualization/' + GEN_VEH_DIST + '_' + STRATEGY \
         #        + str(MULTIVEH) + '_' + str(NO_CHARGE) + '_' + str(FILE_NUMBER) + '_output.json'
-        f_path = 'F:/meso_v2.0/visualization/' + GEN_VEH_DIST + '_' + STRATEGY \
+        f_path = 'F:/meso' \
+                 '_v2.0/visualization/' + GEN_VEH_DIST + '_' + STRATEGY \
                  + str(MULTIVEH) + '_' + str(NO_CHARGE) + '_' + str(FILE_NUMBER) + '_output.json'
 
         f = open(f_path, "w")
