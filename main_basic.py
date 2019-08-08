@@ -1,7 +1,8 @@
 '''
 Version 1.0 : 2018/07/23
 Version 2.0 : 2019/04/04
-aaS@author: Gong Lei(version 1.0), Li Yanyan (Version 2.0)
+
+@author: Gong Lei(version 1.0), Li Yanyan (Version 2.0)
 The objectives of this project are:
 1. test the performance of lane-based toll-collection system;
 2. test whether driver-stress based route choice (v2.0);
